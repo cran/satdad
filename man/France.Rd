@@ -52,7 +52,7 @@ The tail dependograph.
 
 }
 \seealso{
-\code{\link[satdad]{tsicEmp}}, \code{\link[satdad]{ecEmp}},  \code{\link[satdad]{graphsMapEmp}}, \code{\link[satdad]{supportAnalysisEmp}}
+\code{\link[satdad]{tsicEmp}}, \code{\link[satdad]{ecEmp}},  \code{\link[satdad]{graphsMapEmp}}
 
 }
 

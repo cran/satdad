@@ -1,7 +1,7 @@
 ---
-title: "The **satdad** R package: Version 1.0.0 Vignette"
+title: "The **satdad** R package: Version 1.1.0 Vignette"
 author: "Cécile Mercadier"
-date: "2023-03-02"
+date: "2023-03-29"
 html_document:
   theme: flatly
   highlight: tango
@@ -216,7 +216,7 @@ copArchimaxMevlog(x, ds5, dist = "gamma", dist.param = c(shape, scale))
 The tail dependence is completely characterized by the stdf $\ell$,  or equivalently by the `ds` object in this package. Summaries and graphical tools are obviously appreciated.
 
 Well known extremal coefficients (ec), introduced by Tiago de Oliveira, J. (1962/63) and 
-Smith (1990), are available in `satdad`. However, the focus is on the tail superset importance coefficients, which were introduced in Mercadier and Roustant (2019) and upper bounded in Mercadier and Ressel (2021). We believe that they offer an interesting perspective on the description of the tail dependence structure.
+Smith (1990), are available in `satdad`. However, the focus is on the tail superset importance coefficients, which were introduced in Mercadier and Roustant (2019) and upper bounded in Mercadier and Ressel (2021). We believe that they also offer an interesting perspective on the description of the structure of the stable tail dependence function.
 
 
 The theoretical functional decomposition of the variance of the stdf $\ell$ consists in writing $$D(\ell) = \sum_{I \subseteq \{1,...,d\}} D_I(\ell)$$ where $D_I(\ell)$ measures the variance of $\ell_I(U_I)$ the term associated with subset $I$ in the Hoeffding-Sobol decomposition of $\ell$ ; note that $U_I$ represents a random vector with independent standard uniform entries.
@@ -266,7 +266,7 @@ res.ec10 <- ec(ds10)
 as.character(res.ec10$subsets)
 res.ec10$ec
 ```
-The option `which = "iecgraph"` in the `graphs` function of the package draws two minus the PAIRWISE ec in a graphical representation.
+The option `which = "iecgraph"` in the `graphs` function of the package draws TWO minus the pairwise ec in a graphical representation.
 ```{r}
 oldpar <- par(mfrow=c(1,2))
 graphs(ds5, which = "iecgraph")
@@ -313,15 +313,7 @@ graphsEmp(sample.ext, k = 100)
 plotClevEmp(sample.exp, ind = "all", k = 100)
 ```
 
-The `supportAnalysisEmp` function performs a heuristic analysis of the tail dependence support. It produces a boxplot of comparable coefficients tsic, the computation of a level of reference under tail independence, and some printed conclusions. First, we recall the theoretical tail support of `ds5`.
-```{r}
-ds5$sub
-```
 
-On the sample `sample.gamma` this leads to the following.
-```{r}
-supportAnalysisEmp(sample.gamma, k = 100)
-```
 
 
 ## 3.2 The Danube dataset
@@ -421,7 +413,6 @@ More details on the package are given in the help pages associated with the foll
 | `rArchimaxMevlog` |	r function for Archimax Mevlog models.|
 | `rMevlog` |	r-p-d-ell- functions for Mevlog models.|
 | `Stock` |	Dataset. Yearly maxima of Log Returns of ten stock indices 1990-2015.|
-| `supportAnalysisEmp` |	Analysis of the empirical support of the tail dependence structure.|
 | `tic` |	Tail importance coefficients for Mevlog models.|
 | `ticEmp` |	Empirical tail importance coefficients.|
 | `tsic` |	Tail superset importance coefficients for Mevlog models.|

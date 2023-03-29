@@ -109,12 +109,6 @@ graphsEmp(sample.ext, k = 100)
 plotClevEmp(sample.exp, ind = "all", k = 100)
 
 ## -----------------------------------------------------------------------------
-ds5$sub
-
-## -----------------------------------------------------------------------------
-supportAnalysisEmp(sample.gamma, k = 100)
-
-## -----------------------------------------------------------------------------
 library(graphicalExtremes)
 g <- igraph::graph_from_edgelist(danube$flow_edges)
 loc <- as.matrix(danube$info[,c('PlotCoordX', 'PlotCoordY')])

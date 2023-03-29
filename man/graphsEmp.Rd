@@ -93,7 +93,7 @@ The tail dependograph.
 \emph{Extremes}, \bold{22}, 343--372.
 }
 \seealso{
-\code{\link[satdad]{ecEmp}}, \code{\link[satdad]{tsicEmp}}, \code{\link[satdad]{supportAnalysisEmp}}
+\code{\link[satdad]{ecEmp}}, \code{\link[satdad]{tsicEmp}}
 }
 \author{
 Cécile Mercadier (\code{mercadier@math.univ-lyon1.fr})

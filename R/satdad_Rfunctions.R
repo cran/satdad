@@ -1030,7 +1030,7 @@ ecEmp <- function(sample, ind = 2, k, norm = TRUE){
     x[sub] <- 1
     empec[m] <- ellEmp(sample, x = x, k = k)
   }
-  if(norm){u <- unlist(lapply(ind, length)); ec <- (u-empec)/(u-1)}
+  if(norm){u <- unlist(lapply(ind, length)); empec <- (u-empec)/(u-1)}
   return(list(subsets = ind, ec = empec))
 }
 
@@ -1076,7 +1076,7 @@ ecEmp <- function(sample, ind = 2, k, norm = TRUE){
 #' Cécile Mercadier (\code{mercadier@math.univ-lyon1.fr})
 #' @seealso
 #'
-#' \code{\link[satdad]{ecEmp}}, \code{\link[satdad]{tsicEmp}}, \code{\link[satdad]{supportAnalysisEmp}}
+#' \code{\link[satdad]{ecEmp}}, \code{\link[satdad]{tsicEmp}}
 #'
 #' @references
 #' Mercadier, C. and Roustant, O. (2019)
@@ -1569,121 +1569,6 @@ psiinvArchimaxMevlog <- function(t, dist = "exp", dist.param = 1){
   return(res)
 }
 
-
-
-
-#' Analysis of the empirical support of the tail dependence structure.
-#'
-#' Diagnostics are used to analyze tail dependence support in a sample. Subsets are selected based on a comparable version of empirical tail superset importance coefficients (tsic), which are computed while considering their theoretical upper bounds.
-#'
-#' @usage
-#'
-#' supportAnalysisEmp(sample, k,  names = NULL, nboot = 20)
-#'
-#' @param sample A \code{(n times d)} matrix.
-#'
-#' @param k An integer smaller or equal to \code{n}.
-#'
-#' @param names A character vector of length \code{d} which replaces \code{as.character(1:d)} (the default ones).
-#'
-#' @param nboot An integer (20 by default) that indicates the number of \code{(n times d)} samples generated from the asymptotic independence.
-#'
-#'
-#' @returns
-#' \itemize{
-#' \item  \code{$message}  contains the conclusion of the analysis.
-#' \item \code{$selected.subsets}  is a list of the selected subsets.
-#' \item  \code{$comparable.emp.coeff}  contains the largest comparable tsic values in descending order if a selection is made, otherwise all ordered comparable tsic values are returned.
-#' \item The boxplot displays all comparable tsic values, with the name of the largest selected subset displayed if a selection is made.
-#' }
-#'
-#'
-#' @details
-#'
-#' The upper bound for tsic is determined by Theorem 2 in Mercadier and Ressel (2021).
-#' To calculate the tsic for a subset of interest, let \eqn{I} be a subset of interest and \eqn{|I|} its cardinality.
-#' The upper bound is given by \eqn{b(|I|):=\dfrac{2 (|I| !)^2}{(2|I|+2)!}}.
-#' All the tsic values are computed and normalized for comparison, with the normalization factor being  \eqn{\dfrac{1}{b(|I|)}}.
-#' These normalized values are then displayed using boxplots.
-#' A reference level for tail independence is established by analyzing \code{nboot} pseudo-observations sampled from tail independence.
-#' The subsets with the highest renormalized coefficients are identified as the tail dependence support.
-#'
-#' @export supportAnalysisEmp
-#'
-#' @author
-#' Cécile Mercadier (\code{mercadier@math.univ-lyon1.fr})
-#'
-#'
-#' @seealso
-#'  \code{\link[satdad]{tsicEmp}},   \code{\link[satdad]{graphsEmp}}, \code{\link[satdad]{plotClevEmp}},
-#'
-#'
-#' @examples
-#'
-#' ## Fix a 5-dimensional asymmetric tail dependence structure
-#' ds5 <- vector("list")
-#' ds5$d <- 5
-#' ds5$type <- "alog"
-#' ds5$sub <- list(c(1,3),2:4,c(2,5))
-#' ds5$asy <- list(c(1,.3),c(.5,1-.3,1), c(1-.5,1))
-#' ds5$dep <- c(.2,.5,.3)
-#'
-#' ## Simulate ArchimaxMevlog random vectors
-#' sample.gamma <- rArchimaxMevlog(500, ds5, dist = "gamma", dist.param = c(.5, 1))
-#'
-#' ## Provide the diagnostics associated with k = 50
-#' supportAnalysisEmp(sample.gamma, k = 50)
-#'
-
-supportAnalysisEmp <- function(sample, k, names = NULL, nboot = 20){
-  d <- ncol(sample)
-  if(is.null(names)){
-    noms <- 1:d
-  }else{noms <- names}
-  sub <- .subsets_cpp(d)[-(1:d)]
-  len.sub <- lapply(sub, length)
-  ref.test <- rep(NA,nboot)
-  ds.test <- gen.ds(d = d, type = "alog", sub = as.list(1:d))
-  for(b in 1:nboot){
-    sample.test <- rMevlog(n = nrow(sample), ds.test)
-      tsic.test.renorm <- tsicEmp(sample.test, ind = sub, k = k, sobol = TRUE, norm = TRUE)$tsic
-    ref.test[b] <- max(tsic.test.renorm)
-  }
-  ref.test <- median(ref.test)
-  tsic.renorm <- tsicEmp(sample, ind = sub, k = k, sobol = TRUE, norm = TRUE)$tsic
-  order.tsic.renorm <- order(tsic.renorm, decreasing = TRUE)
-  sort.tsic.renorm <- tsic.renorm[order.tsic.renorm]
-  sort.sub <- sub[order.tsic.renorm]
-  cut=sum(sort.tsic.renorm >= ref.test)
-  if(cut == 0){
-    message <- "No Tail Dependence: The model could be asymptotically independent."
-    selec.sub <- NULL
-    eff.dim <- 1
-    cut <- 0
-  }else{
-    if(cut == length(sort.tsic.renorm)){
-      message <- "No Asymmetric Tail Dependence: The model could be globally symmetric."
-      selec.sub <- NULL
-      eff.dim <- d
-      cut <- 0
-    }else{
-      selec.sub <- sort.sub[1:cut]
-      selec.tsic.renorm <- sort.tsic.renorm[1:cut]
-      message <- "Asymmetric Tail Dependence: The model could be supported by selected subsets."
-      if(!is.null(names)){selec.sub <- lapply(selec.sub, function(v){names[v]})}
-    }
-  }
-      title = "Comparable Emp. Tsic Boxplot"
-      boxplot(tsic.renorm, main = title, ylim = c(0, max(tsic.renorm, ref.test)))
-      lines(x = c(.8,1.2), y = c(ref.test, ref.test), lwd = 2, col = 5)
-      if(cut > 0){
-        text(x = rep(c(1.3,0.7), length(selec.tsic.renorm))[1:length(selec.tsic.renorm)], y = sort.tsic.renorm[1:length(selec.tsic.renorm)], labels = as.character(selec.sub))
-      }
-
-  aux <- sort.tsic.renorm
-  if(cut>0){aux <- aux[1:cut]}
-  return(list(message = message, selected.subsets = as.character(selec.sub), comparable.emp.coeff = aux))
-}
 
 
 
